@@ -1,0 +1,455 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>แบบสอบถาม POS คาเฟ่</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Layout: one calm column, sticky role + progress bar on top, questions as ruled rows (no cards), summary block at the end */
+:root {
+  --bg: #f5f7f5;
+  --surface: #ffffff;
+  --fg: #1c2421;
+  --muted: #58665f;
+  --line: #dce3de;
+  --accent: #1d6a55;
+  --accent-fg: #ffffff;
+  --accent-soft: #e0efe8;
+  --focus: #0b57d0;
+  --font-body: "Noto Sans Thai", "Sarabun", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-head: "IBM Plex Sans Thai", "Noto Sans Thai", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111715; --surface: #19211e; --fg: #e5ebe7; --muted: #98a79f; --line: #2a3430;
+    --accent: #5fc4a4; --accent-fg: #0a1a14; --accent-soft: #1b2f28; --focus: #8ab4f8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111715; --surface: #19211e; --fg: #e5ebe7; --muted: #98a79f; --line: #2a3430;
+  --accent: #5fc4a4; --accent-fg: #0a1a14; --accent-soft: #1b2f28; --focus: #8ab4f8;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 56px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 760px; margin: 0 auto; }
+h1, h2 { font-family: var(--font-head); text-wrap: balance; margin: 0; line-height: 1.3; }
+a, button, input, textarea { font: inherit; color: inherit; }
+
+/* sticky bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line);
+  margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); }
+.bar-in { max-width: 760px; margin: 0 auto; display: grid; gap: 8px; }
+.bar-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.bar-title { font-family: var(--font-head); font-weight: 600; font-size: 15px; }
+.progress-text { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.track { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.fill { height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
+@media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
+
+/* intro */
+.intro { padding: 28px 0 8px; display: grid; gap: 12px; }
+.intro h1 { font-size: clamp(26px, 5vw, 34px); font-weight: 700; }
+.intro p { margin: 0; color: var(--muted); max-width: 62ch; }
+.meta { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 8px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field > span { font-size: 14px; font-weight: 500; }
+.field input[type="text"] { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.roles { display: flex; flex-wrap: wrap; gap: 8px; }
+.roles-wrap { display: grid; gap: 6px; margin-top: 4px; }
+.roles-wrap > span { font-size: 14px; font-weight: 500; }
+.hint { font-size: 13px; color: var(--muted); }
+
+/* chips (radio + checkbox) */
+.chip { position: relative; display: inline-flex; }
+.chip input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.chip span { display: inline-block; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 15px; line-height: 1.5; }
+.chip input:checked + span { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+.chip input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+.chip:hover span { border-color: var(--accent); }
+
+/* sections + questions */
+section.sec { margin-top: 40px; }
+section.sec > header { display: grid; gap: 2px; padding-bottom: 8px; border-bottom: 2px solid var(--fg); }
+section.sec h2 { font-size: 21px; font-weight: 600; }
+.for { font-size: 13px; color: var(--muted); }
+.q { padding: 16px 0; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.qt { display: flex; gap: 10px; align-items: baseline; font-weight: 500; }
+.qn { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; min-width: 2.4em; flex: none; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); resize: vertical; line-height: 1.5; }
+textarea::placeholder, input::placeholder { color: var(--muted); opacity: .8; }
+input[type="text"]:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.pt { font-weight: 500; }
+
+/* output */
+.out { margin-top: 48px; display: grid; gap: 12px; padding-top: 20px; border-top: 2px solid var(--fg); }
+.out h2 { font-size: 21px; font-weight: 600; }
+.out p { margin: 0; color: var(--muted); }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+button { cursor: pointer; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-weight: 500; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+#summary { min-height: 220px; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 14px; }
+.status { min-height: 1.5em; font-size: 14px; color: var(--accent); }
+.draft-note { font-size: 13px; color: var(--muted); }
+</style>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="bar-row">
+      <span class="bar-title">แบบสอบถาม POS คาเฟ่</span>
+      <span class="progress-text" id="progressText" aria-live="polite">ตอบแล้ว 0 จาก 0 ข้อ</span>
+    </div>
+    <div class="track" role="progressbar" aria-label="ความคืบหน้า" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="track"><div class="fill" id="fill"></div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="intro">
+    <h1>ช่วยบอกว่าร้านคุณอยากให้ระบบ POS ทำอะไรได้บ้าง</h1>
+    <p>ใช้เวลาราว 30–45 นาที ตอบเท่าที่รู้ ข้อไหนไม่เกี่ยวกับร้านให้ข้ามได้ คำตอบบันทึกอัตโนมัติในเครื่องนี้ ปิดหน้าแล้วกลับมาตอบต่อได้ ตอบเสร็จกดสร้างสรุปท้ายหน้า แล้วส่งข้อความกลับให้ผู้จัดทำ</p>
+    <div class="meta">
+      <label class="field"><span>ชื่อร้าน</span><input type="text" id="shop" autocomplete="organization" placeholder="เช่น ร้านกาแฟหน้าปากซอย"></label>
+      <label class="field"><span>ชื่อผู้ตอบ</span><input type="text" id="who" autocomplete="name" placeholder="ชื่อเล่นก็ได้"></label>
+    </div>
+    <div class="roles-wrap" role="radiogroup" aria-labelledby="roleLabel">
+      <span id="roleLabel">คุณเป็นใครในร้าน</span>
+      <div class="roles" id="roles"></div>
+      <span class="hint" id="roleHint">เลือกบทบาทเพื่อแสดงเฉพาะหัวข้อที่คุณตอบได้ดีที่สุด ถ้าไม่เลือกจะเห็นทุกหัวข้อ</span>
+    </div>
+  </div>
+
+  <main id="form"></main>
+
+  <section class="out" id="outSec">
+    <h2>สรุปคำตอบและส่งกลับ</h2>
+    <p>กดสร้างสรุป แล้วคัดลอกข้อความไปส่งทาง LINE หรืออีเมลถึงผู้จัดทำ</p>
+    <div class="btns">
+      <button type="button" class="primary" id="makeBtn">สร้างสรุปคำตอบ</button>
+      <button type="button" id="copyBtn" hidden>คัดลอกข้อความ</button>
+      <button type="button" id="saveBtn" hidden>บันทึกเป็นไฟล์ .txt</button>
+      <button type="button" id="clearBtn">ล้างคำตอบทั้งหมด</button>
+    </div>
+    <div class="status" id="status" role="status"></div>
+    <label class="field" id="sumWrap" hidden><span>ข้อความสรุป</span><textarea id="summary" readonly rows="12"></textarea></label>
+    <span class="draft-note">คำตอบถูกเก็บไว้เฉพาะในเบราว์เซอร์ของเครื่องนี้ ยังไม่ถูกส่งไปที่ใดจนกว่าคุณจะคัดลอกไปส่งเอง</span>
+  </section>
+</div>
+
+<script>
+(function () {
+  var NEED = ["ต้องการ", "ไม่ต้องการ", "ยังไม่แน่ใจ"];
+  function Q(id, text, opts, multi) { return { id: id, text: text, opts: opts || null, multi: !!multi }; }
+
+  var SEC = [
+    { id: "1", t: "ข้อมูลทั่วไปของร้าน", r: "om", q: [
+      Q("1.1", "ชื่อร้าน และมีกี่สาขา (ตอนนี้และแผน 1–2 ปีข้างหน้า)"),
+      Q("1.2", "รูปแบบการขายของร้าน", ["นั่งในร้าน", "ซื้อกลับ", "ไดรฟ์ทรู", "เดลิเวอรี/ขายออนไลน์", "อีเวนต์/ออกบูธ"], true),
+      Q("1.3", "จำนวนที่นั่งและจำนวนโต๊ะ"),
+      Q("1.4", "เวลาเปิด-ปิด และช่วงเวลาที่คนแน่นที่สุด"),
+      Q("1.5", "จำนวนออเดอร์เฉลี่ยต่อวัน และในวันที่แน่นที่สุด"),
+      Q("1.6", "จำนวนพนักงานต่อกะ และมีกี่กะต่อวัน"),
+      Q("1.7", "ตอนนี้ใช้อะไรรับออเดอร์และคิดเงิน", ["จดกระดาษ", "POS เดิม", "Excel/Google Sheets", "ยังไม่มีระบบ"], true),
+      Q("1.8", "ปัญหาที่เจอมากที่สุดกับวิธีปัจจุบัน 3 ข้อ"),
+      Q("1.9", "ร้านจดทะเบียนภาษีมูลค่าเพิ่ม (VAT) หรือไม่", ["จดแล้ว", "ยังไม่ได้จด", "ไม่แน่ใจ"], false)
+    ]},
+    { id: "2", t: "เมนูและสินค้า", r: "ms", q: [
+      Q("2.1", "มีเมนูทั้งหมดกี่รายการ และเพิ่มหรือเปลี่ยนเมนูบ่อยแค่ไหน"),
+      Q("2.2", "แบ่งหมวดหมู่เมนูอย่างไร (กาแฟ ชา เบเกอรี่ อาหาร ฯลฯ)"),
+      Q("2.3", "เมนูเดียวมีหลายขนาดหรือไม่ และราคาต่างกันอย่างไร", ["มีหลายขนาด (S/M/L)", "ขนาดเดียว"], false),
+      Q("2.4", "ตัวเลือกเสริมที่ลูกค้าเลือกได้", ["ระดับความหวาน", "ปริมาณน้ำแข็ง", "เปลี่ยนนม", "ช็อตเพิ่ม", "ท็อปปิ้ง"], true),
+      Q("2.5", "ตัวเลือกเสริมคิดเงินเพิ่มหรือไม่ (เช่น นมโอ๊ต +20 บาท)", ["คิดเพิ่ม", "ไม่คิดเพิ่ม", "บางรายการ"], false),
+      Q("2.6", "มีเมนูเซ็ตหรือคอมโบ (เช่น กาแฟ + เค้ก) หรือไม่", ["มี", "ไม่มี"], false),
+      Q("2.7", "มีเมนูตามฤดูกาลหรือเมนูที่ขายเฉพาะบางเวลาหรือไม่", ["มี", "ไม่มี"], false),
+      Q("2.8", "อยากให้มีรูปภาพเมนูบนหน้าจอหรือไม่", NEED, false),
+      Q("2.9", "มีสินค้าที่ขายเป็นชิ้นหรือแพ็ก เช่น เมล็ดกาแฟ แก้วทัมเบลอร์ หรือไม่", ["มี", "ไม่มี"], false),
+      Q("2.10", "ต้องการปิดเมนูชั่วคราวเมื่อวัตถุดิบหมดหรือไม่", NEED, false)
+    ]},
+    { id: "3", t: "ขั้นตอนรับออเดอร์และการขาย", r: "ms", q: [
+      Q("3.1", "ลูกค้าสั่งอย่างไร", ["สั่งที่เคาน์เตอร์", "พนักงานรับที่โต๊ะ", "สแกน QR สั่งเอง"], true),
+      Q("3.2", "จ่ายเงินตอนไหน", ["จ่ายก่อนรับเครื่องดื่ม", "จ่ายหลังรับเครื่องดื่ม", "ทั้งสองแบบ"], false),
+      Q("3.3", "ออเดอร์ควรส่งไปที่บาร์หรือครัวอัตโนมัติหรือไม่ (จอ KDS หรือเครื่องพิมพ์ใบออเดอร์)", NEED, false),
+      Q("3.4", "ต้องมีเลขคิวหรือเลขเรียกลูกค้าหรือไม่ และเรียกอย่างไร", NEED, false),
+      Q("3.5", "แก้ไขหรือยกเลิกออเดอร์หลังส่งไปแล้วได้หรือไม่ ใครมีสิทธิ์"),
+      Q("3.6", "ต้องมีบิลรวมโต๊ะ แยกบิล หรือย้ายโต๊ะหรือไม่", NEED, false),
+      Q("3.7", "ต้องมีช่องหมายเหตุพิเศษต่อรายการ เช่น “ไม่ใส่ฟองนม” หรือไม่", NEED, false),
+      Q("3.8", "มีค่าบริการ (service charge) หรือทิปหรือไม่ และคิดอย่างไร"),
+      Q("3.9", "ต้องรับออเดอร์สั่งล่วงหน้าหรือจองโต๊ะหรือไม่", NEED, false),
+      Q("3.10", "ขั้นตอนไหนช้าหรือผิดพลาดบ่อยในช่วงคนแน่น")
+    ]},
+    { id: "4", t: "การชำระเงิน ใบเสร็จ และภาษี", r: "om", q: [
+      Q("4.1", "ช่องทางรับเงินที่ต้องรองรับ", ["เงินสด", "PromptPay QR", "บัตรเครดิต/เดบิต", "TrueMoney Wallet", "บัตรของขวัญ/คูปอง"], true),
+      Q("4.2", "การตรวจสอบยอดโอน PromptPay", ["ให้ระบบตรวจอัตโนมัติ", "พนักงานตรวจเองได้", "ไม่แน่ใจ"], false),
+      Q("4.3", "ลูกค้าจ่ายแบบผสมได้หรือไม่ (เช่น เงินสดบางส่วน โอนบางส่วน)", NEED, false),
+      Q("4.4", "ต้องมีการเปิด-ปิดลิ้นชักเงินสด นับเงินต้นกะและท้ายกะ และเทียบยอดหรือไม่", NEED, false),
+      Q("4.5", "รูปแบบใบเสร็จ", ["พิมพ์", "ส่งอีเมล", "ส่ง LINE", "ไม่ออกใบเสร็จ"], true),
+      Q("4.6", "ลูกค้าขอใบกำกับภาษีเต็มรูปแบบบ่อยแค่ไหน และต้องเก็บชื่อ ที่อยู่ เลขผู้เสียภาษีหรือไม่"),
+      Q("4.7", "ต้องออกใบกำกับภาษีอิเล็กทรอนิกส์ (e-Tax Invoice) หรือไม่", NEED, false),
+      Q("4.8", "การคืนเงินหรือยกเลิกบิลทำอย่างไร ต้องมีเหตุผลและผู้อนุมัติหรือไม่"),
+      Q("4.9", "การปัดเศษสตางค์", ["ปัดเศษ", "ไม่ปัดเศษ"], false)
+    ]},
+    { id: "5", t: "สต็อกและสูตรเครื่องดื่ม", r: "ms", q: [
+      Q("5.1", "ให้ระบบตัดสต็อกวัตถุดิบอัตโนมัติตามเมนูที่ขายหรือไม่", NEED, false),
+      Q("5.2", "ต้องบันทึกสูตรต่อเมนู เช่น เอสเปรสโซ 18 กรัม นม 150 มล. หรือไม่", NEED, false),
+      Q("5.3", "วัตถุดิบหลักที่ต้องนับ", ["เมล็ดกาแฟ", "นม", "ไซรัป", "ถ้วย/ฝา/หลอด", "เบเกอรี่"], true),
+      Q("5.4", "มีวัตถุดิบที่มีวันหมดอายุและต้องแจ้งเตือนหรือไม่", NEED, false),
+      Q("5.5", "ต้องแจ้งเตือนเมื่อของใกล้หมดหรือไม่ และตั้งจุดสั่งซื้อซ้ำไว้ที่เท่าไร", NEED, false),
+      Q("5.6", "ต้องบันทึกการรับของเข้า ใบสั่งซื้อ และข้อมูลซัพพลายเออร์หรือไม่", NEED, false),
+      Q("5.7", "ต้องบันทึกของเสีย ของหก หรือเมนูทดลองชิมหรือไม่", NEED, false),
+      Q("5.8", "ตรวจนับสต็อกบ่อยแค่ไหน และใครเป็นคนนับ", ["ทุกวัน", "ทุกสัปดาห์", "ทุกเดือน"], false),
+      Q("5.9", "ต้องคำนวณต้นทุนต่อแก้วและกำไรขั้นต้นต่อเมนูหรือไม่", NEED, false),
+      Q("5.10", "สต็อกต้องแยกตามสาขา หรือโอนย้ายระหว่างสาขาหรือไม่", NEED, false)
+    ]},
+    { id: "6", t: "พนักงานและสิทธิ์การใช้งาน", r: "ms", q: [
+      Q("6.1", "บทบาทที่ต้องมีในระบบ เช่น เจ้าของ ผู้จัดการ แคชเชียร์ บาริสต้า"),
+      Q("6.2", "แต่ละบทบาททำอะไรได้หรือไม่ได้ (ลดราคา ยกเลิกบิล ดูรายงาน แก้ราคา)"),
+      Q("6.3", "พนักงานเข้าระบบอย่างไร", ["PIN", "รหัสผ่าน", "สแกนนิ้ว", "บัตร"], true),
+      Q("6.4", "ต้องบันทึกเวลาเข้า-ออกงานและกะของพนักงานในระบบเดียวกันหรือไม่", NEED, false),
+      Q("6.5", "ต้องดูยอดขายแยกตามพนักงานหรือไม่ (เพื่อคิดค่าคอมมิชชันหรือโบนัส)", NEED, false),
+      Q("6.6", "ต้องมีประวัติว่าใครทำอะไรเมื่อไรในระบบ (audit log) หรือไม่", NEED, false),
+      Q("6.7", "พนักงานใช้ภาษาอะไรบนหน้าจอ", ["ไทย", "อังกฤษ", "พม่า", "อื่น ๆ"], true),
+      Q("6.8", "พนักงานใหม่ควรใช้เวลากี่วันถึงจะรับออเดอร์ได้ (เป้าหมายความง่ายของระบบ)")
+    ]},
+    { id: "7", t: "โปรโมชันและสมาชิก", r: "om", q: [
+      Q("7.1", "ประเภทส่วนลดที่ใช้", ["ลดเป็น %", "ลดเป็นบาท", "ซื้อ 1 แถม 1", "ราคาพิเศษตามเวลา (happy hour)"], true),
+      Q("7.2", "ส่วนลดใส่ด้วยมือโดยพนักงาน หรือให้ระบบคำนวณอัตโนมัติ", ["ใส่ด้วยมือ", "ระบบคำนวณอัตโนมัติ", "ทั้งสองแบบ"], false),
+      Q("7.3", "มีคูปองหรือโค้ดส่วนลดหรือไม่", NEED, false),
+      Q("7.4", "มีระบบสมาชิกหรือสะสมแต้มหรือไม่ และสะสมอย่างไร (ต่อบาท ต่อแก้ว ซื้อครบ N แก้วแถม 1)", NEED, false),
+      Q("7.5", "ข้อมูลสมาชิกที่ต้องเก็บ", ["ชื่อ", "เบอร์โทร", "วันเกิด", "เครื่องดื่มโปรด"], true),
+      Q("7.6", "สมาชิกระบุตัวตนอย่างไร", ["เบอร์โทร", "QR", "บัตร", "LINE"], true),
+      Q("7.7", "ส่งข้อความโปรโมชันหรือวันเกิดให้สมาชิกผ่านช่องทางไหน", ["LINE OA", "SMS", "อีเมล", "ไม่ต้องการ"], true),
+      Q("7.8", "ต้องมีบัตรของขวัญหรือเติมเงินล่วงหน้า (prepaid) หรือไม่", NEED, false),
+      Q("7.9", "ตอนนี้ขอความยินยอมในการเก็บข้อมูลส่วนบุคคล (PDPA) จากลูกค้าอย่างไร")
+    ]},
+    { id: "8", t: "รายงาน", r: "om", q: [
+      Q("8.1", "รายงานที่ต้องดูเป็นประจำ", ["ยอดขาย", "กำไร", "เมนูขายดี", "ช่วงเวลาขายดี", "สรุปปิดกะ"], true),
+      Q("8.2", "ต้องการสรุปยอดปิดกะหรือปิดวันแบบไหน และส่งให้ใคร"),
+      Q("8.3", "ต้องแยกรายงานตามหมวดเมนู พนักงาน ช่องทางชำระเงิน และสาขาหรือไม่"),
+      Q("8.4", "ต้องดูรายงานจากมือถือหรือจากนอกร้านได้หรือไม่", NEED, false),
+      Q("8.5", "ส่งออกข้อมูลเป็นไฟล์แบบไหน", ["Excel", "CSV", "PDF"], true),
+      Q("8.6", "ต้องการแดชบอร์ดยอดขายแบบเรียลไทม์หรือไม่", NEED, false),
+      Q("8.7", "ต้องเก็บข้อมูลย้อนหลังนานเท่าไร", ["1 ปี", "5 ปี", "ไม่แน่ใจ"], false),
+      Q("8.8", "ตัวเลขใดที่เจ้าของร้านอยากรู้มากที่สุด แต่ตอนนี้ยังไม่รู้")
+    ]},
+    { id: "9", t: "อุปกรณ์และโครงสร้างพื้นฐาน", r: "ms", q: [
+      Q("9.1", "อุปกรณ์ที่มีอยู่แล้ว เช่น แท็บเล็ต คอมพิวเตอร์ เครื่องพิมพ์ใบเสร็จ ลิ้นชักเงินสด เครื่องสแกนบาร์โค้ด เครื่องรูดบัตร (ยี่ห้อและรุ่น)"),
+      Q("9.2", "ใช้อุปกรณ์เดิม หรือยอมซื้อชุดใหม่", ["ใช้อุปกรณ์เดิม", "ซื้อชุดใหม่", "ผสมกัน"], false),
+      Q("9.3", "จำนวนจุดขาย (เครื่อง POS) และจอในครัวหรือบาร์ที่ต้องการ"),
+      Q("9.4", "ระบบที่อยากใช้งาน", ["iPad", "Android", "Windows", "เว็บเบราว์เซอร์"], true),
+      Q("9.5", "อินเทอร์เน็ตในร้านเสถียรแค่ไหน และเคยหลุดบ่อยหรือไม่"),
+      Q("9.6", "ต้องใช้งานต่อได้เมื่ออินเทอร์เน็ตหลุด (โหมดออฟไลน์) หรือไม่", ["ต้องใช้ได้", "ไม่จำเป็น", "ยังไม่แน่ใจ"], false),
+      Q("9.7", "ต้องการเครื่องพิมพ์ฉลากติดแก้วหรือไม่", NEED, false),
+      Q("9.8", "ระบบอยู่บนคลาวด์ หรืออยากติดตั้งเซิร์ฟเวอร์เองในร้าน", ["คลาวด์", "เซิร์ฟเวอร์ในร้าน", "ไม่แน่ใจ"], false)
+    ]},
+    { id: "10", t: "การเชื่อมต่อกับระบบอื่น", r: "om", q: [
+      Q("10.1", "ขายผ่านแอปเดลิเวอรีอะไรบ้าง และอยากให้ออเดอร์เข้า POS อัตโนมัติหรือไม่", ["GrabFood", "LINE MAN", "Foodpanda", "Shopee Food", "ไม่ขายเดลิเวอรี"], true),
+      Q("10.2", "ต้องการหน้าสั่งออนไลน์หรือเว็บไซต์ของร้านเองหรือไม่", NEED, false),
+      Q("10.3", "ใช้โปรแกรมบัญชีอะไรอยู่ และต้องส่งยอดขายเข้าไปหรือไม่", ["FlowAccount", "PEAK", "Express", "Excel", "ไม่มี"], true),
+      Q("10.4", "ต้องเชื่อมกับระบบเงินเดือนหรือลงเวลางานของร้านหรือไม่", NEED, false),
+      Q("10.5", "ต้องเชื่อมกับ LINE Official Account, เฟซบุ๊ก หรืออินสตาแกรมหรือไม่", NEED, false),
+      Q("10.6", "ผู้ให้บริการชำระเงินที่ใช้อยู่ (ธนาคารหรือเกตเวย์) และต้องเชื่อมตรงกับ POS หรือไม่"),
+      Q("10.7", "ต้องนำเข้าข้อมูลเมนู สต็อก หรือสมาชิกจากระบบเดิมหรือไม่ และอยู่ในรูปแบบไฟล์ใด")
+    ]},
+    { id: "11", t: "ความเร็ว ความปลอดภัย และงบประมาณ", r: "om", q: [
+      Q("11.1", "ยอมรับเวลาที่ใช้คิดเงินหนึ่งบิลได้มากที่สุดกี่วินาที"),
+      Q("11.2", "ถ้าระบบล่มช่วงเปิดร้าน ยอมรับได้นานเท่าไร และมีแผนสำรองอย่างไร"),
+      Q("11.3", "ต้องสำรองข้อมูลอัตโนมัติบ่อยแค่ไหน", ["ทุกชั่วโมง", "ทุกวัน", "ไม่แน่ใจ"], false),
+      Q("11.4", "ข้อมูลที่ต้องปกป้องเป็นพิเศษ เช่น ข้อมูลสมาชิก ยอดขาย ต้นทุน และใครเข้าถึงได้"),
+      Q("11.5", "มีข้อกำหนด PDPA หรือภาษีของกรมสรรพากรที่ร้านต้องปฏิบัติตามอะไรบ้าง"),
+      Q("11.6", "หน้าจอต้องใช้งานง่ายในที่แสงน้อย มือเปียก หรือสวมถุงมือหรือไม่ (ขนาดปุ่มและตัวอักษร)"),
+      Q("11.7", "งบประมาณเริ่มต้น และงบรายเดือนสำหรับค่าบริการหรือบำรุงรักษา"),
+      Q("11.8", "ต้องการใช้งานจริงภายในวันที่เท่าไร และมีช่วงทดลองใช้คู่กับระบบเดิมหรือไม่"),
+      Q("11.9", "ใครเป็นผู้ดูแลระบบหลังเปิดใช้ และต้องการการอบรมหรือคู่มือแบบใด")
+    ]},
+    { id: "12", t: "ลำดับความสำคัญและความเห็นเพิ่มเติม", r: "oms", q: [] }
+  ];
+
+  var PRIO = ["รับออเดอร์และคิดเงิน", "ตัวเลือกเสริมและหมายเหตุต่อรายการ", "ชำระเงินด้วย PromptPay QR", "ใบเสร็จและใบกำกับภาษี", "ตัดสต็อกและสูตรเครื่องดื่ม", "สมาชิกและสะสมแต้ม", "โปรโมชันและส่วนลด", "รายงานยอดขายและกำไร", "จอครัวหรือบาร์ (KDS)", "เชื่อมแอปเดลิเวอรี", "ทำงานออฟไลน์ได้", "หลายสาขา"];
+  var LEVELS = ["ต้องมี", "ควรมี", "มีก็ดี", "ไม่ต้องการ"];
+  var LAST = [
+    Q("12.1", "ถ้าเลือกได้เพียง 3 ฟีเจอร์ในเวอร์ชันแรก คือฟีเจอร์ใด"),
+    Q("12.2", "ระบบ POS ที่เคยใช้หรือเคยเห็นแล้วชอบหรือไม่ชอบอะไร"),
+    Q("12.3", "มีสิ่งใดที่ไม่ได้ถามไว้ แต่คิดว่าสำคัญสำหรับร้านนี้")
+  ];
+  SEC[11].q = LAST;
+
+  var ROLES = [["owner", "เจ้าของร้าน", "o"], ["manager", "ผู้จัดการ", "m"], ["staff", "พนักงานหน้าร้าน", "s"]];
+  var ROLE_NAMES = { o: "เจ้าของร้าน", m: "ผู้จัดการ", s: "พนักงานหน้าร้าน" };
+  var KEY = "pos-cafe-questionnaire-v1";
+
+  var form = document.getElementById("form");
+  var rolesEl = document.getElementById("roles");
+
+  function chip(type, name, value, id) {
+    var l = document.createElement("label"); l.className = "chip";
+    var i = document.createElement("input"); i.type = type; i.name = name; i.value = value; if (id) i.id = id;
+    var s = document.createElement("span"); s.textContent = value;
+    l.appendChild(i); l.appendChild(s); return l;
+  }
+
+  ROLES.forEach(function (r, n) { rolesEl.appendChild(chip("radio", "role", r[1], "role-" + r[0])); });
+
+  SEC.forEach(function (sec) {
+    var s = document.createElement("section"); s.className = "sec"; s.id = "sec-" + sec.id; s.dataset.roles = sec.r;
+    var h = document.createElement("header");
+    var h2 = document.createElement("h2"); h2.textContent = "ส่วนที่ " + sec.id + ": " + sec.t; h.appendChild(h2);
+    var f = document.createElement("span"); f.className = "for";
+    f.textContent = "เหมาะกับ: " + sec.r.split("").map(function (c) { return ROLE_NAMES[c]; }).join(" · ");
+    h.appendChild(f); s.appendChild(h);
+
+    if (sec.id === "12") {
+      var pi = document.createElement("div"); pi.className = "q";
+      var pt = document.createElement("div"); pt.className = "qt";
+      pt.innerHTML = '<span class="qn"></span><span>จัดแต่ละฟีเจอร์เป็น “ต้องมี”, “ควรมี”, “มีก็ดี” หรือ “ไม่ต้องการ” เพื่อกำหนดขอบเขตเวอร์ชันแรก</span>';
+      pi.appendChild(pt); s.appendChild(pi);
+      PRIO.forEach(function (name, i) {
+        var d = document.createElement("div"); d.className = "q"; d.dataset.kind = "prio"; d.dataset.pi = i;
+        var t = document.createElement("div"); t.className = "pt"; t.textContent = name; d.appendChild(t);
+        var o = document.createElement("div"); o.className = "opts";
+        LEVELS.forEach(function (lv, j) { o.appendChild(chip("radio", "p-" + i, lv, "p-" + i + "-" + j)); });
+        d.appendChild(o); s.appendChild(d);
+      });
+    }
+
+    sec.q.forEach(function (q) {
+      var d = document.createElement("div"); d.className = "q"; d.dataset.kind = "q"; d.dataset.qid = q.id;
+      var t = document.createElement("label"); t.className = "qt"; t.setAttribute("for", "t-" + q.id);
+      t.innerHTML = '<span class="qn"></span><span></span>';
+      t.firstChild.textContent = q.id; t.lastChild.textContent = q.text; d.appendChild(t);
+      if (q.opts) {
+        var o = document.createElement("div"); o.className = "opts";
+        q.opts.forEach(function (v, j) { o.appendChild(chip(q.multi ? "checkbox" : "radio", "c-" + q.id, v, "c-" + q.id + "-" + j)); });
+        d.appendChild(o);
+      }
+      var ta = document.createElement("textarea"); ta.id = "t-" + q.id; ta.rows = q.opts ? 1 : 2;
+      ta.placeholder = q.opts ? "เพิ่มเติม (ถ้ามี)" : "พิมพ์คำตอบ";
+      d.appendChild(ta); s.appendChild(d);
+    });
+    form.appendChild(s);
+  });
+
+  /* state */
+  function roleKey() { var el = document.querySelector('input[name="role"]:checked'); if (!el) return ""; for (var i = 0; i < ROLES.length; i++) if (ROLES[i][1] === el.value) return ROLES[i][2]; return ""; }
+  function collect() {
+    var st = { shop: document.getElementById("shop").value, who: document.getElementById("who").value, role: (document.querySelector('input[name="role"]:checked') || {}).value || "", a: {}, p: {} };
+    document.querySelectorAll('.q[data-kind="q"]').forEach(function (d) {
+      var id = d.dataset.qid, c = [];
+      d.querySelectorAll(".opts input:checked").forEach(function (x) { c.push(x.value); });
+      st.a[id] = { c: c, t: d.querySelector("textarea").value };
+    });
+    document.querySelectorAll('.q[data-kind="prio"]').forEach(function (d) {
+      var x = d.querySelector("input:checked"); if (x) st.p[d.dataset.pi] = x.value;
+    });
+    return st;
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(collect())); } catch (e) {} }
+  function restore() {
+    var st = null; try { st = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+    if (!st) return;
+    document.getElementById("shop").value = st.shop || ""; document.getElementById("who").value = st.who || "";
+    document.querySelectorAll('input[name="role"]').forEach(function (x) { x.checked = x.value === st.role; });
+    document.querySelectorAll('.q[data-kind="q"]').forEach(function (d) {
+      var a = st.a && st.a[d.dataset.qid]; if (!a) return;
+      d.querySelectorAll(".opts input").forEach(function (x) { x.checked = a.c.indexOf(x.value) >= 0; });
+      d.querySelector("textarea").value = a.t || "";
+    });
+    document.querySelectorAll('.q[data-kind="prio"]').forEach(function (d) {
+      var v = st.p && st.p[d.dataset.pi]; d.querySelectorAll("input").forEach(function (x) { x.checked = x.value === v; });
+    });
+  }
+
+  function applyRole() {
+    var k = roleKey();
+    document.querySelectorAll("section.sec").forEach(function (s) { s.hidden = !(k === "" || s.dataset.roles.indexOf(k) >= 0); });
+  }
+  function progress() {
+    var total = 0, done = 0;
+    document.querySelectorAll("section.sec").forEach(function (s) {
+      if (s.hidden) return;
+      s.querySelectorAll(".q[data-kind]").forEach(function (d) {
+        total++;
+        if (d.dataset.kind === "prio") { if (d.querySelector("input:checked")) done++; }
+        else if (d.querySelector(".opts input:checked") || d.querySelector("textarea").value.trim()) done++;
+      });
+    });
+    var pct = total ? Math.round(done * 100 / total) : 0;
+    document.getElementById("progressText").textContent = "ตอบแล้ว " + done + " จาก " + total + " ข้อ";
+    document.getElementById("fill").style.width = pct + "%";
+    document.getElementById("track").setAttribute("aria-valuenow", pct);
+  }
+  function refresh() { applyRole(); progress(); save(); }
+  document.addEventListener("input", refresh);
+  document.addEventListener("change", refresh);
+
+  /* summary */
+  function buildSummary() {
+    var st = collect(), L = [], k = roleKey(), unanswered = 0;
+    L.push("แบบสอบถาม Requirement ระบบ POS ร้านคาเฟ่");
+    L.push("ร้าน: " + (st.shop || "-"));
+    L.push("ผู้ตอบ: " + (st.who || "-") + (st.role ? " (" + st.role + ")" : ""));
+    L.push("วันที่: " + new Date().toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" }));
+    SEC.forEach(function (sec) {
+      if (!(k === "" || sec.r.indexOf(k) >= 0)) return;
+      var block = [];
+      if (sec.id === "12") {
+        PRIO.forEach(function (n, i) { var v = st.p[i]; if (v) block.push("- " + n + ": " + v); else unanswered++; });
+      }
+      sec.q.forEach(function (q) {
+        var a = st.a[q.id]; var parts = [];
+        if (a.c.length) parts.push(a.c.join(", "));
+        if (a.t.trim()) parts.push(a.t.trim());
+        if (parts.length) block.push(q.id + " " + q.text + "\n   → " + parts.join(" | ")); else unanswered++;
+      });
+      if (block.length) { L.push(""); L.push("ส่วนที่ " + sec.id + ": " + sec.t); L.push(block.join("\n")); }
+    });
+    L.push(""); L.push("(ข้อที่ยังไม่ได้ตอบ: " + unanswered + " ข้อ)");
+    return L.join("\n");
+  }
+  var statusEl = document.getElementById("status"), sumEl = document.getElementById("summary");
+  function say(t) { statusEl.textContent = t; }
+
+  document.getElementById("makeBtn").addEventListener("click", function () {
+    sumEl.value = buildSummary();
+    document.getElementById("sumWrap").hidden = false;
+    document.getElementById("copyBtn").hidden = false;
+    if (dl) document.getElementById("saveBtn").hidden = false;
+    say("สร้างสรุปแล้ว กดคัดลอกแล้วส่งกลับให้ผู้จัดทำได้เลย");
+    sumEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  });
+  document.getElementById("copyBtn").addEventListener("click", function () {
+    var text = sumEl.value;
+    function fallback() { sumEl.focus(); sumEl.select(); say("เลือกข้อความไว้แล้ว กดคัดลอกด้วยเมนูของเครื่อง"); }
+    try {
+      navigator.clipboard.writeText(text).then(function () { say("คัดลอกแล้ว นำไปวางในแชตหรืออีเมลได้เลย"); }, fallback);
+    } catch (e) { fallback(); }
+  });
+  var dl = null;
+  document.getElementById("saveBtn").addEventListener("click", function () {
+    if (!dl) return;
+    dl.save({ filename: "pos-cafe-requirement.txt", data: sumEl.value }).then(function () { say("บันทึกไฟล์แล้ว"); }, function (e) { if (!e || e.code !== "declined") say("บันทึกไฟล์ไม่ได้ในหน้านี้ ใช้ปุ่มคัดลอกแทน"); });
+  });
+  var armed = false;
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    var b = this;
+    if (!armed) { armed = true; b.textContent = "กดอีกครั้งเพื่อยืนยันการล้าง"; setTimeout(function () { armed = false; b.textContent = "ล้างคำตอบทั้งหมด"; }, 4000); return; }
+    armed = false; b.textContent = "ล้างคำตอบทั้งหมด";
+    document.querySelectorAll("input[type=text], textarea").forEach(function (x) { x.value = ""; });
+    document.querySelectorAll("input[type=radio], input[type=checkbox]").forEach(function (x) { x.checked = false; });
+    sumEl.value = ""; document.getElementById("sumWrap").hidden = true; document.getElementById("copyBtn").hidden = true; document.getElementById("saveBtn").hidden = true;
+    say("ล้างคำตอบแล้ว"); refresh();
+  });
+
+  restore(); refresh();
+  try { if (window.claude && window.claude.use) window.claude.use("downloads").then(function (d) { dl = d; }, function () {}); } catch (e) {}
+})();
+</script>
+
+</body></html>
